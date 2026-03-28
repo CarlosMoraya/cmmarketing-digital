@@ -360,8 +360,12 @@ const CTA = () => {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
+    // Se estiver rodando localmente (localhost), usa o Node.js. Se for o site real na Hostinger, usa o arquivo PHP nativo.
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const endpoint = isLocal ? '/api/contato' : '/api/contato.php';
+
     try {
-      const response = await fetch("/api/contato", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

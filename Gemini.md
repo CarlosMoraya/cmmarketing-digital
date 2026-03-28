@@ -41,16 +41,20 @@ O projeto é uma **landing page premium** para a agência **CM Marketing & Gest�
 - Priorize a estética "WOW" conforme as instruções do sistema.
 
 ## 📅 Estado Atual (28/03/2026)
-- **Atividade Principal:** Integração de Leads via E-mail Comercial.
-- **Status:** Backend configurado com NodeMailer e endpoint `/api/contato`. Frontend atualizado para envio via JSON. Sistema pronto para receber credenciais SMTP no `.env`.
+- **Atividade Principal:** Integração de Leads via E-mail Comercial (Concluída - Híbrida).
+- **Status:** Sistema de envio de e-mail funcional em dois ambientes:
+  - **Local**: Envio via Node.js (Nodemailer) na porta 3001.
+  - **Produção (Hostinger)**: Envio via script PHP (`/api/contato.php`) para contornar limitações de Node.js em hospedagem compartilhada.
+- **Configuração Final**: O arquivo `contato.php` foi ajustado com o remetente fixo (`From`) do domínio para evitar bloqueios de SPAM e suporte a `Reply-To`.
+- **Próximos Passos (Usuário)**: Fazer o upload do arquivo `public/api/contato.php` atualizado para a pasta `public_html/api/` no Gerenciador de Arquivos da Hostinger.
 
 ## 📋 Histórico de Atividades
 - [28/03/26] Entendimento da estrutura de arquivos e stack tecnológica.
-- [28/03/26] Criação da documentação inicial e unificação no `agent.md`. Exclusão do `Gemini.md`.
-- [28/03/26] Substituição inicial da logo para o uso de imagem local (`logo.png`).
-- [28/03/26] Reestruturamento completo do componente de Logo em `App.tsx`.
-- [28/03/26] Ajuste refinado das proporções da logo SVG.
-- [28/03/26] Inicialização do repositório Git e primeiro commit/push para GitHub.
+- [28/03/26] Criação da documentação focada no arquivo `Gemini.md` cumprindo a regra global.
+- [28/03/26] Reestruturamento completo do componente de Logo em `App.tsx` e SVGs.
+- [28/03/26] Inicialização do repositório Git e push para GitHub.
 - [28/03/26] Preparo para Hostinger: Geração de build estático, criação de `.htaccess`, implementação de `server.js` (Express).
-- [28/03/26] Correção de sintaxe no `package.json`.
-- [28/03/26] **Integração de E-mail**: Instalação do `nodemailer`, configuração do arquivo `.env` com parâmetros SMTP, criação da rota POST `/api/contato` no `server.js` e refatoração do formulário no `App.tsx` para abandonar o Web3Forms em favor de uma solução interna mais profissional.
+- [28/03/26] **Integração de E-mail**: Implementação de lógica híbrida em `App.tsx` para detectar ambiente (Local vs Produção).
+- [28/03/26] **Fallback PHP**: Criação de `public/api/contato.php` como solução robusta para envio de e-mail na Hostinger, utilizando a função `mail()` nativa.
+- [28/03/26] **Correção de Entrega**: Ajuste no `From` do PHP para usar o e-mail institucional e `Reply-To` para o e-mail do lead, garantindo a entrega e facilitando a resposta.
+
