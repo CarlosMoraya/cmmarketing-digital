@@ -3,6 +3,13 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
+// Carrega o PHPMailer instalado via Composer
+require __DIR__ . '/vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $data = json_decode(file_get_contents("php://input"));
     
@@ -12,33 +19,67 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit;
     }
 
-    $to = "contato@cmarketingegestao.com.br";
-    $subject = isset($data->subject) ? $data->subject : "Novo Lead: Diagnóstico CM Marketing";
-    
-    // Montagem do corpo do e-mail de forma limpa
-    $message = "Novo Lead Capturado pelo Site\n";
-    $message .= "=============================\n\n";
-    $message .= "Nome: " . $data->name . "\n";
-    $message .= "E-mail do Lead: " . $data->email . "\n";
-    $message .= "Telefone: " . $data->phone . "\n\n";
-    $message .= "=============================\n";
-    $message .= "Enviado via Website CM Marketing.";
-    
-    // IMPORTANTE: O remetente (From) DEVE ser o e-mail do próprio domínio para a Hostinger entregar.
-    $from = "contato@cmarketingegestao.com.br";
-    
-    $headers = "From: CM Marketing <" . $from . ">\r\n";
-    $headers .= "Reply-To: " . $data->email . "\r\n"; // Permite que você clique em responder e vá para o cliente
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-    $headers .= "X-Mailer: PHP/" . phpversion();
-    
-    if (mail($to, $subject, $message, $headers)) {
+    $leadName  = htmlspecialchars($data->name);
+    $leadEmail = htmlspecialchars($data->email);
+    $leadPhone = htmlspecialchars($data->phone);
+
+    // Template HTML do e-mail
+    $htmlBody = "
+    <html><head><style>
+      body { font-family: sans-serif; color: #333; }
+      .box { border: 1px solid #ddd; border-radius: 6px; max-width: 580px; overflow: hidden; }
+      .header { background: #1a1a1a; color: #fff; padding: 16px 20px; }
+      .header h2 { margin: 0; font-size: 18px; }
+      .content { padding: 24px 20px; background: #fafafa; }
+      .field { margin-bottom: 12px; }
+      .label { font-weight: bold; color: #555; display: block; font-size: 12px; text-transform: uppercase; }
+      .value { font-size: 16px; color: #111; }
+      .footer { font-size: 11px; color: #999; padding: 12px 20px; border-top: 1px solid #eee; }
+    </style></head><body>
+      <div class='box'>
+        <div class='header'><h2>Novo Lead — CM Marketing</h2></div>
+        <div class='content'>
+          <div class='field'><span class='label'>Nome</span><span class='value'>{$leadName}</span></div>
+          <div class='field'><span class='label'>E-mail</span><span class='value'>{$leadEmail}</span></div>
+          <div class='field'><span class='label'>Telefone</span><span class='value'>{$leadPhone}</span></div>
+        </div>
+        <div class='footer'>Enviado automaticamente pelo site cmarketingegestao.com.br</div>
+      </div>
+    </body></html>";
+
+    $mail = new PHPMailer(true);
+    try {
+        // Configuração SMTP — idêntica ao servidor Node.js
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.hostinger.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'contato@cmarketingegestao.com.br';
+        $mail->Password   = '2j&f06~PSNI';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL na porta 465
+        $mail->Port       = 465;
+        $mail->CharSet    = 'UTF-8';
+
+        // Remetente institucional
+        $mail->setFrom('contato@cmarketingegestao.com.br', 'CM Marketing');
+        
+        // Destinatário (você)
+        $mail->addAddress('contato@cmarketingegestao.com.br');
+        
+        // Reply-To aponta para o lead — clicar em "Responder" vai direto para ele
+        $mail->addReplyTo($leadEmail, $leadName);
+
+        // Assunto exibe o nome do lead (igual ao comportamento do Node.js local)
+        $mail->Subject = "Novo Lead: {$leadName}";
+        $mail->isHTML(true);
+        $mail->Body    = $htmlBody;
+        $mail->AltBody = "Nome: {$leadName}\nE-mail: {$leadEmail}\nTelefone: {$leadPhone}";
+
+        $mail->send();
         http_response_code(200);
         echo json_encode(["success" => true, "message" => "E-mail enviado com sucesso"]);
-    } else {
+    } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(["success" => false, "message" => "Erro ao processar envio pelo servidor."]);
+        echo json_encode(["success" => false, "message" => "Erro no envio: " . $mail->ErrorInfo]);
     }
 } else {
     http_response_code(405);

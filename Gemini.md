@@ -45,8 +45,8 @@ O projeto é uma **landing page premium** para a agência **CM Marketing & Gest�
 - **Status:** Sistema de envio de e-mail funcional em dois ambientes:
   - **Local**: Envio via Node.js (Nodemailer) na porta 3001.
   - **Produção (Hostinger)**: Envio via script PHP (`/api/contato.php`) para contornar limitações de Node.js em hospedagem compartilhada.
-- **Configuração Final**: O arquivo `contato.php` foi ajustado com o remetente fixo (`From`) do domínio para evitar bloqueios de SPAM e suporte a `Reply-To`.
-- **Próximos Passos (Usuário)**: Fazer o upload do arquivo `public/api/contato.php` atualizado para a pasta `public_html/api/` no Gerenciador de Arquivos da Hostinger.
+- **Configuração Final**: Adicionado o 5º parâmetro (`-f`) na função `mail()` do PHP. Ele é o *Envelope-From* (Return-Path), o que garante que os e-mails enviados pelo servidor assinem o SPF do domínio corretamente, mitigando quedas na caixa de SPAM.
+- **Próximos Passos (Usuário)**: Substituir o arquivo `public/api/contato.php` na Hostinger pela nova versão com a correção do `-f` no Return-Path.
 
 ## 📋 Histórico de Atividades
 - [28/03/26] Entendimento da estrutura de arquivos e stack tecnológica.
