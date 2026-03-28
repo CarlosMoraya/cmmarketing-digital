@@ -358,32 +358,24 @@ const CTA = () => {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
-    
-    // Pega a chave de acesso do arquivo .env
-    // @ts-ignore
-    const accessKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
-    if (!accessKey) {
-      console.error("Chave de Acesso do Web3Forms não foi encontrada no .env.");
-      setSubmitStatus('error');
-      setIsSubmitting(false);
-      return;
-    }
-    
-    formData.append("access_key", accessKey);
+    const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch("/api/contato", {
         method: "POST",
-        body: formData
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data)
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.success) {
+      if (result.success) {
         setSubmitStatus('success');
         form.reset();
       } else {
-        console.error("Erro no formulário:", data);
+        console.error("Erro no formulário:", result);
         setSubmitStatus('error');
       }
     } catch (error) {
