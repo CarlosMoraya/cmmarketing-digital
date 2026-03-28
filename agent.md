@@ -11,7 +11,7 @@ O projeto é uma **landing page premium** para a agência **CM Marketing & Gest�
 - **Animações:** Framer Motion (`motion/react`).
 - **Ícones:** Lucide React.
 - **IA:** Integração com Google Generative AI (`@google/genai`).
-- **Outros:** Express (disponível nas dependências para uso em backend se necessário).
+- **Infra (Hostinger):** Servidor Express (`server.js`) para servir a SPA e `.htaccess` para Apache.
 
 ## 🎨 Design & Estética
 - **Estilo:** Minimalista, sofisticado e premium.
@@ -50,3 +50,6 @@ O projeto é uma **landing page premium** para a agência **CM Marketing & Gest�
 - [28/03/26] Substituição inicial da logo para o uso de imagem local (`logo.png`).
 - [28/03/26] Reestruturamento completo do componente de Logo em `App.tsx` para um SVG fiel à identidade visual (com os traços unidos do ícone CM) acompanhado do texto "MARKETING E GESTÃO" empilhado perfeitamente à direita, sem o fundo branco problemático da imagem original de anexo.
 - [28/03/26] Ajuste refinado das proporções da logo SVG e da tipografia para 80% do tamanho anterior para maior elegância no layout.
+- [28/03/26] Inicialização do repositório Git e primeiro commit/push para GitHub.
+- [28/03/26] Preparo para Hostinger: Geração de build estático (`npm run build`), criação de `.htaccess` para suporte de SPAs em Apache, implementação de `server.js` (Express) e configuração do script `start` no `package.json` para compatibilidade total com o ambiente Node.js da Hostinger.
+- [28/03/26] Correção de sintaxe no `package.json` para evitar erros de deployment.
