@@ -41,12 +41,11 @@ O projeto é uma **landing page premium** para a agência **CM Marketing & Gest�
 - Priorize a estética "WOW" conforme as instruções do sistema.
 
 ## 📅 Estado Atual (28/03/2026)
-- **Atividade Principal:** Integração de Leads via E-mail Comercial (Concluída - Híbrida).
-- **Status:** Sistema de envio de e-mail funcional em dois ambientes:
-  - **Local**: Envio via Node.js (Nodemailer) na porta 3001.
-  - **Produção (Hostinger)**: Envio via script PHP (`/api/contato.php`) para contornar limitações de Node.js em hospedagem compartilhada.
-- **Configuração Final**: Adicionado o 5º parâmetro (`-f`) na função `mail()` do PHP. Ele é o *Envelope-From* (Return-Path), o que garante que os e-mails enviados pelo servidor assinem o SPF do domínio corretamente, mitigando quedas na caixa de SPAM.
-- **Próximos Passos (Usuário)**: Substituir o arquivo `public/api/contato.php` na Hostinger pela nova versão com a correção do `-f` no Return-Path.
+- **Status:** Sistema de e-mail 100% funcional e higienizado.
+  - **Local**: Node.js (Nodemailer) enviando via SMTP.
+  - **Produção**: PHP (PHPMailer v6.12) enviando via SMTP autenticado da Hostinger (Porta 465 SSL).
+- **Configuração Final**: Implementação do PHPMailer na pasta `public/api/vendor` com carregamento via Composer (`autoload.php`). Esta abordagem resolveu definitivamente as quedas na caixa de SPAM e permitiu que o nome do lead apareça no assunto do e-mail.
+- **Próximos Passos (Arquitetura)**: Manter a pasta `vendor` no servidor de produção. Toda nova alteração no formulário disparará e-mails autenticados.
 
 ## 📋 Histórico de Atividades
 - [28/03/26] Entendimento da estrutura de arquivos e stack tecnológica.
